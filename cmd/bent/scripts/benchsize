@@ -3,16 +3,13 @@
 tmp=tmp-bench-size-$$
 
 if [ `uname` = "Darwin" ] ; then
-	# e.g., `total 20986192`
-	totalawk='/^total/ {print $2}'
 	# e.g., `        Section __text: 1445477`
 	otherawk='$2 ~ "__.?%s:" {tot += $3} END {print tot}'
 	size -m "$1" > $tmp
 	wposix=
+	statflag="-f %z"
 else
 	x=`which gsize`
-	# e.g., `Total                3879861`
-	totalawk='$1 == "Total" {print $2}'
 	# e.g., `.text                1269331   4207296`
 	# Field 2 is size, field 3 is address.
 	otherawk='$1 ~ ".%s" {tot += $2} END {print tot}'
@@ -22,6 +19,7 @@ else
 		"$x" -A "$1" > $tmp
 	fi
 	wposix="-Wposix"
+	statflag="--format %s"
 fi
 
 # $1: size output file
@@ -36,9 +34,7 @@ function find_section() {
 	fi
 }
 
-
-# note total is different
-total=$(awk ${wposix} "${totalawk}" < ${tmp})
+total=$(stat $statflag "$1")
 
 text=$(find_section "${tmp}" "text")
 gopclntab=$(find_section "${tmp}" "gopclntab")
