@@ -1209,23 +1209,24 @@ func escape(s string) string {
 
 // asCommandLine renders cmd as something that could be copy-and-pasted into a command line
 func asCommandLine(cwd string, cmd *exec.Cmd) string {
-	s := "("
+	var s strings.Builder
+	s.WriteString("(")
 	if cmd.Dir != "" && cmd.Dir != cwd {
-		s += "cd" + escape(cmd.Dir) + ";"
+		s.WriteString("cd" + escape(cmd.Dir) + ";")
 	}
 	for _, e := range cmd.Env {
 		if !strings.HasPrefix(e, "PATH=") &&
 			!strings.HasPrefix(e, "HOME=") &&
 			!strings.HasPrefix(e, "USER=") &&
 			!strings.HasPrefix(e, "SHELL=") {
-			s += escape(e)
+			s.WriteString(escape(e))
 		}
 	}
 	for _, a := range cmd.Args {
-		s += escape(a)
+		s.WriteString(escape(a))
 	}
-	s += " )"
-	return s
+	s.WriteString(" )")
+	return s.String()
 }
 
 // checkAndSetUpFileSystem does a number of tasks to ensure that the tests will
@@ -1441,8 +1442,8 @@ func csToSet(s string) map[string]bool {
 		return nil
 	}
 	m := make(map[string]bool)
-	ss := strings.Split(s, ",")
-	for _, sss := range ss {
+	ss := strings.SplitSeq(s, ",")
+	for sss := range ss {
 		m[sss] = true
 	}
 	return m

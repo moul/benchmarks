@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 	"unicode/utf8"
@@ -174,10 +175,7 @@ func (c *runCmd) Run(args []string) error {
 		}
 	}
 	if c.runCfg.pgoCount == 0 {
-		c.runCfg.pgoCount = c.runCfg.count
-		if c.runCfg.pgoCount > pgoCountDefaultMax {
-			c.runCfg.pgoCount = pgoCountDefaultMax
-		}
+		c.runCfg.pgoCount = min(c.runCfg.count, pgoCountDefaultMax)
 	}
 
 	var err error
@@ -503,13 +501,7 @@ func canonicalizePath(path, base string) string {
 
 func checkPlatform() {
 	currentPlatform := common.CurrentPlatform()
-	platformOK := false
-	for _, platform := range common.SupportedPlatforms {
-		if currentPlatform == platform {
-			platformOK = true
-			break
-		}
-	}
+	platformOK := slices.Contains(common.SupportedPlatforms, currentPlatform)
 	if !platformOK {
 		log.Printf("warning: %s is an unsupported platform, use at your own risk!", currentPlatform)
 	}

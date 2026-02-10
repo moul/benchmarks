@@ -16,20 +16,6 @@ import (
 	"github.com/biogo/store/step"
 )
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 func within(alpha float64, short, long int) bool {
 	return float64(short) >= float64(long)*(1-alpha)
 }

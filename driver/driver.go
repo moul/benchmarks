@@ -84,11 +84,9 @@ func BenchMem() int {
 }
 
 func setupWatchdog() {
-	t := *benchTime
-	// Be somewhat conservative, and build benchmark does not care about benchTime.
-	if t < time.Minute {
-		t = time.Minute
-	}
+	t := max(
+		// Be somewhat conservative, and build benchmark does not care about benchTime.
+		*benchTime, time.Minute)
 	t *= time.Duration(*benchNum)
 	t *= 2 // to account for iteration number auto-tuning
 	if *flake > 0 {
@@ -280,7 +278,7 @@ func Parallel(N uint64, P int, f func()) {
 	numProcs := P * runtime.GOMAXPROCS(0)
 	var wg sync.WaitGroup
 	wg.Add(numProcs)
-	for p := 0; p < numProcs; p++ {
+	for range numProcs {
 		go func() {
 			defer wg.Done()
 			for int64(atomic.AddUint64(&N, ^uint64(0))) >= 0 {

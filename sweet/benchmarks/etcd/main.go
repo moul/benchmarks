@@ -96,7 +96,7 @@ func clusterString(instances []*etcdInstance, typ portType) string {
 
 func launchEtcdCluster(cfg *config) ([]*etcdInstance, error) {
 	var instances []*etcdInstance
-	for i := 0; i < etcdInstances; i++ {
+	for i := range etcdInstances {
 		instances = append(instances, &etcdInstance{
 			name:       fmt.Sprintf("infra%d", i+1),
 			clientPort: basePort + 2*i,

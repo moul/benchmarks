@@ -302,9 +302,7 @@ func (b *B) startRSSSampler() chan<- struct{} {
 		return nil
 	}
 	stop := make(chan struct{})
-	b.wg.Add(1)
-	go func() {
-		defer b.wg.Done()
+	b.wg.Go(func() {
 
 		rssSamples := make([]uint64, 0, 1024)
 		for {
@@ -324,7 +322,7 @@ func (b *B) startRSSSampler() chan<- struct{} {
 				rssSamples = append(rssSamples, r)
 			}
 		}
-	}()
+	})
 	return stop
 }
 
@@ -405,7 +403,7 @@ func (b *B) report() {
 	fmt.Fprintln(out)
 }
 
-func warningf(format string, args ...interface{}) {
+func warningf(format string, args ...any) {
 	s := fmt.Sprintf(format, args...)
 	s = strings.Join(strings.Split(s, "\n"), "\n# ")
 	fmt.Fprintf(os.Stderr, "# warning: %s\n", s)
@@ -415,7 +413,7 @@ func avg(s []uint64) uint64 {
 	avg := uint64(0)
 	lo := uint64(0)
 	l := uint64(len(s))
-	for i := 0; i < len(s); i++ {
+	for i := range s {
 		avg += s[i] / l
 		mod := s[i] % l
 		if lo >= l-mod {

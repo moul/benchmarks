@@ -37,7 +37,6 @@ func (c *DriverConfig) AddFlags(f *flag.FlagSet) {
 
 	f.StringVar(&c.ResultsDir, "results-dir", "", "directory to write diagnostics data")
 	for _, t := range Types() {
-		t := t
 		if t == Perf {
 			f.Func(string(t), fmt.Sprintf("enable %s diagnostics with `flags`", t), func(s string) error {
 				c.cfgs[t] = Config{Type: t, Flags: s}

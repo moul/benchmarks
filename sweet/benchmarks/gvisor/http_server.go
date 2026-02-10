@@ -16,7 +16,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"sort"
+	"slices"
 	"strconv"
 	"syscall"
 	"time"
@@ -165,7 +165,7 @@ func (b httpServer) run(cfg *config, out io.Writer) (err error) {
 	}, driver.DoTime(true), driver.WithGOMAXPROCS(procs))
 
 	workers := make([]pool.Worker, 0, clients)
-	for i := 0; i < clients; i++ {
+	for range clients {
 		workers = append(workers, newWorker())
 	}
 
@@ -184,9 +184,7 @@ func (b httpServer) run(cfg *config, out io.Writer) (err error) {
 		for _, w := range workers {
 			latencies = append(latencies, w.(*worker).lat...)
 		}
-		sort.Slice(latencies, func(i, j int) bool {
-			return latencies[i] < latencies[j]
-		})
+		slices.Sort(latencies)
 
 		// Sort and report percentiles.
 		p50 := latencies[len(latencies)*50/100]

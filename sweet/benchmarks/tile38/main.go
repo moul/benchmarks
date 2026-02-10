@@ -150,7 +150,7 @@ func (d durSlice) Swap(i, j int)      { d[i], d[j] = d[j], d[i] }
 func runBenchmark(d *driver.B, host string, port, clients int, iters int) error {
 	workers := make([]pool.Worker, 0, clients)
 	iterCount := int64(iters) // Shared atomic variable.
-	for i := 0; i < clients; i++ {
+	for range clients {
 		w, err := newWorker(host, port, &iterCount)
 		if err != nil {
 			return err

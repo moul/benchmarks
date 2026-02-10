@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"maps"
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
@@ -96,9 +97,7 @@ func (c *Config) GoTool(buildLog io.Writer) *Go {
 func (c *Config) Copy() *Config {
 	cc := *c
 	cc.PGOFiles = make(map[string]string)
-	for k, v := range c.PGOFiles {
-		cc.PGOFiles[k] = v
-	}
+	maps.Copy(cc.PGOFiles, c.PGOFiles)
 	cc.PGOConfigs = make([]PGOConfig, len(c.PGOConfigs))
 	for i, v := range c.PGOConfigs {
 		cc.PGOConfigs[i] = v
@@ -160,8 +159,8 @@ type ConfigEnv struct {
 	*Env
 }
 
-func (c *ConfigEnv) UnmarshalTOML(data interface{}) error {
-	ldata, ok := data.([]interface{})
+func (c *ConfigEnv) UnmarshalTOML(data any) error {
+	ldata, ok := data.([]any)
 	if !ok {
 		return fmt.Errorf("expected data for env to be a list")
 	}

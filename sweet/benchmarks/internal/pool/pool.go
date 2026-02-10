@@ -58,7 +58,6 @@ func New(ctx context.Context, workers []Worker) *P {
 
 	// Spin up workers.
 	for _, w := range workers {
-		w := w
 		g.Go(func() error {
 			ready.Done()
 			<-gun // wait for starting gun to close

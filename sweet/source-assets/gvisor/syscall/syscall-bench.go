@@ -9,7 +9,7 @@ import "os"
 var ppid int
 
 func main() {
-	for i := 0; i < 500000; i++ {
+	for range 500000 {
 		ppid = os.Getppid()
 	}
 }

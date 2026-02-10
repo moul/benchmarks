@@ -174,7 +174,6 @@ func waitForCluster(instances []*cockroachdbInstance, cfg *config) error {
 
 	var wg sync.WaitGroup
 	for _, inst := range instances {
-		inst := inst
 		wg.Add(1)
 		go func(context.Context) {
 			defer wg.Done()

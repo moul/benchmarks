@@ -10,7 +10,7 @@ import (
 	"os"
 	"runtime"
 	"runtime/trace"
-	"sort"
+	"slices"
 	"testing"
 	"time"
 	"unsafe"
@@ -111,7 +111,7 @@ func (lb *LB) storeSlice(c *circularBuffer, count int) {
 
 //go:noinline
 func (lb *LB) work(c *circularBuffer, count int) {
-	for i := 0; i < count; i++ {
+	for i := range count {
 		lb.storeSlice(c, i)
 	}
 }
@@ -196,7 +196,7 @@ func (lb0 *LB) bench(b *testing.B) {
 	}
 	run()
 
-	sort.Slice(lb.delays, func(i, j int) bool { return lb.delays[i] < lb.delays[j] })
+	slices.Sort(lb.delays)
 	delays := lb.delays
 	delayLen := float64(len(delays))
 	average, median := time.Duration(lb.total.Nanoseconds()/int64(count)), delays[len(delays)/2]

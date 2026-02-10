@@ -6,6 +6,7 @@ package diagnostics
 
 import (
 	"fmt"
+	"maps"
 	"strings"
 )
 
@@ -26,8 +27,8 @@ func (c ConfigSet) Strings() []string {
 }
 
 // UnmarshalTOML implements TOML unmarshaling for ConfigSet.
-func (c *ConfigSet) UnmarshalTOML(data interface{}) error {
-	ldata, ok := data.([]interface{})
+func (c *ConfigSet) UnmarshalTOML(data any) error {
+	ldata, ok := data.([]any)
 	if !ok {
 		return fmt.Errorf("expected data for diagnostics to be a list")
 	}
@@ -50,9 +51,7 @@ func (c *ConfigSet) UnmarshalTOML(data interface{}) error {
 // Copy creates a deep clone of a ConfigSet.
 func (c ConfigSet) Copy() ConfigSet {
 	cfgs := make(map[Type]Config, len(c.cfgs))
-	for k, v := range c.cfgs {
-		cfgs[k] = v
-	}
+	maps.Copy(cfgs, c.cfgs)
 	return ConfigSet{cfgs}
 }
 

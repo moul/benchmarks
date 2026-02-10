@@ -96,21 +96,21 @@ func TraceKill(cmd *exec.Cmd) {
 	cmdLog.Printf("killall -SIGINT %s", filepath.Base(cmd.Path))
 }
 
-func CommandPrintf(format string, args ...interface{}) {
+func CommandPrintf(format string, args ...any) {
 	if !cmdOn {
 		return
 	}
 	cmdLog.Printf(format, args...)
 }
 
-func Printf(format string, args ...interface{}) {
+func Printf(format string, args ...any) {
 	if !actOn {
 		return
 	}
 	actLog.Printf(format, args...)
 }
 
-func Print(args ...interface{}) {
+func Print(args ...any) {
 	if !actOn {
 		return
 	}

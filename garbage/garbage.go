@@ -37,7 +37,7 @@ func benchmark() driver.Result {
 		avail := (driver.BenchMem() << 20) * 4 / 5 // 4/5 to account for non-heap memory
 		npkg := avail / mem / 2                    // 2 to account for GOGC=100
 		parsed = make([]ParsedPackage, npkg)
-		for n := 0; n < 2; n++ { // warmup GC
+		for range 2 { // warmup GC
 			for i := range parsed {
 				parsed[i] = parsePackage()
 			}
@@ -57,7 +57,7 @@ func benchmarkN(N uint64) {
 	wg.Add(G)
 	remain := int64(N)
 	pos := 0
-	for g := 0; g < G; g++ {
+	for range G {
 		go func() {
 			defer wg.Done()
 			for atomic.AddInt64(&remain, -1) >= 0 {
@@ -97,10 +97,7 @@ func packageMemConsumption() int {
 	}
 	ms1 := new(runtime.MemStats)
 	runtime.ReadMemStats(ms1)
-	mem := int(ms1.Alloc-ms0.Alloc) / N
-	if mem < 1<<16 {
-		mem = 1 << 16
-	}
+	mem := max(int(ms1.Alloc-ms0.Alloc)/N, 1<<16)
 	return mem
 }
 
